@@ -1,6 +1,5 @@
-
-
-//! Code that cxx might autogenerate for some bindings.
+//! Code that cxx might autogenerate for some bindings, backed by C++
+//! functions.
 
 use crate::reference_wrapper::NonConstRef;
 
@@ -32,12 +31,15 @@ impl Outer {
 
 impl NonConstRef<Outer> {
     pub(crate) fn get_t_non_const(&self) -> NonConstRef<Inner> {
-        // This would be in C++ so would not be scary like this.
-        let mutable_t = unsafe {
-            std::mem::transmute::<*const Inner,*mut Inner>(&(self.as_ref().t))
-        };
+        // This would be in C++ so would simply be:
+        //   Inner& Outer::get_t_non_const() { return t; }
+        let mutable_t =
+            unsafe { std::mem::transmute::<*const Inner, *mut Inner>(&(self.as_ref().t)) };
         NonConstRef::new(mutable_t as *mut Inner)
     }
     /// Non-const C++ method on T.
     pub(crate) fn outer_nonconst_method(&self) {}
 }
+
+pub(crate) fn take_const_reference(_inner: &Inner) {}
+pub(crate) fn take_nonconst_reference(_inner: NonConstRef<Inner>) {}
