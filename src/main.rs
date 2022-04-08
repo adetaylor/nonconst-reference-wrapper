@@ -12,13 +12,13 @@ fn main() {
     };
     // In reality, such NonConstRefs will always be created from pointers
     // passed from C++ so no &mut exists even momentarily
-    let reference_to_outer = NonConstRef::new(&mut outer);
+    let mut reference_to_outer = NonConstRef::new(&mut outer);
     reference_to_outer.outer_const_method();
     reference_to_outer.outer_nonconst_method();
     let inner = reference_to_outer.get_t_const();
     inner.t_const_method();
     let inner = reference_to_outer.get_t_non_const();
-    let inner2 = reference_to_outer.get_t_non_const();
+    let mut inner2 = reference_to_outer.get_t_non_const();
     inner.t_const_method();
     inner2.t_const_method();
     inner2.t_nonconst_method();

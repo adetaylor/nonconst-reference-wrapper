@@ -13,7 +13,15 @@ impl Inner {
 
 impl<'a> NonConstRef<'a, Inner> {
     /// Non-const C++ method on T.
-    pub(crate) fn t_nonconst_method(&self) {}
+    /// Note the receiver is a &mut NonConstRef<T>, not a &mut T, so this is OK
+    /// from an aliasing point of view.
+    /// The reeceiver here doesn't HAVE to be &mut. We could just take &self.
+    /// We're making it _harder_ for folks to accidentally mutate C++ state
+    /// by mutating the same NonConstRef in several places. But fundamentally,
+    /// several NonConstRefs can exist to the same C++ data, and there's nothing
+    /// we can do to prevent that. Indeed, NonConstRef is actually Clone and
+    /// Copy. So this &mut exclusivity is advisory, at best.
+    pub(crate) fn t_nonconst_method(&mut self) {}
 }
 
 // Simulation of a type containing another type
@@ -38,7 +46,7 @@ impl<'a> NonConstRef<'a, Outer> {
         NonConstRef::new(mutable_t as *mut Inner)
     }
     /// Non-const C++ method on T.
-    pub(crate) fn outer_nonconst_method(&self) {}
+    pub(crate) fn outer_nonconst_method(&mut self) {}
 }
 
 pub(crate) fn take_const_reference(_inner: &Inner) {}
