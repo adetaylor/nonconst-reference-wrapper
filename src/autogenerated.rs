@@ -11,7 +11,7 @@ impl Inner {
     pub(crate) fn t_const_method(&self) {}
 }
 
-impl NonConstRef<Inner> {
+impl<'a> NonConstRef<'a, Inner> {
     /// Non-const C++ method on T.
     pub(crate) fn t_nonconst_method(&self) {}
 }
@@ -29,7 +29,7 @@ impl Outer {
     pub(crate) fn outer_const_method(&self) {}
 }
 
-impl NonConstRef<Outer> {
+impl<'a> NonConstRef<'a, Outer> {
     pub(crate) fn get_t_non_const(&self) -> NonConstRef<Inner> {
         // This would be in C++ so would simply be:
         //   Inner& Outer::get_t_non_const() { return t; }
