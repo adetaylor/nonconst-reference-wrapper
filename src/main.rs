@@ -32,4 +32,8 @@ fn main() {
     ptr.as_mut().unwrap().outer_const_method();
     ptr.pin_mut().outer_nonconst_method();
     ptr.pin_mut().outer_const_method();
+    let _ref_to_ptr = ptr.pin_mut();
+    drop(ptr);
+    // Does not compile due to lifetimes.
+    //    _ref_to_ptr.outer_nonconst_method();
 }
